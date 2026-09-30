@@ -1,0 +1,11 @@
+PASS 원본 행동 signal 유지
+PASS 교육 레이어 자체 can_chii 없음
+PASS 교육 레이어 자체 can_pon 없음
+PASS 교육 레이어 자체 can_ron 없음
+PASS 교육 레이어 자체 can_tsumo 없음
+PASS 한국어 치 설명
+PASS 자패 퐁 설명
+PASS 후리텐 설명
+PASS 리치 설명
+PASS 엔진 판정 안내
+PASS 10/10

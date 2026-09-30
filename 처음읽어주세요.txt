@@ -1,0 +1,49 @@
+OpenRiichi 한국어 초보교실 - Windows 자동빌드 키트 v0.2
+=====================================================
+
+목표
+----
+공식 FluffyStuff/OpenRiichi를 그대로 내려받고, 마작 룰/AI/점수 엔진은 건드리지 않은 채
+한국어 교육 UI 패치(GameMenuView.vala)만 덮어쓴 뒤 GitHub Actions의 Windows/MSYS2 환경에서
+OpenRiichi.exe를 실제 컴파일하는 빌드 키트입니다.
+
+왜 이 방식인가
+--------------
+OpenRiichi 공식 README가 Windows 빌드 방법으로 MSYS2 + MinGW64 + Vala + Meson을 안내합니다.
+이 PC/ChatGPT 실행환경에 Windows Vala 툴체인이 없어도 GitHub Actions의 windows-latest에서
+같은 툴체인을 설치하여 빌드할 수 있습니다.
+
+사용법
+------
+1. GitHub에서 새 빈 저장소를 하나 만듭니다. 예: OpenRiichi-KR-Education-Build
+2. 이 ZIP의 내용 전체(.github 폴더 포함)를 그 저장소에 업로드/커밋합니다.
+3. GitHub 저장소의 Actions 탭을 엽니다.
+4. 왼쪽에서 "Build OpenRiichi KR Education Windows"를 선택합니다.
+5. "Run workflow" 버튼을 누릅니다.
+6. 빌드가 초록색으로 끝나면 해당 실행 기록을 엽니다.
+7. 페이지 아래 Artifacts에서
+   OpenRiichi_KR_Education_Windows_Portable
+   을 내려받습니다.
+8. 압축을 풀고 OpenRiichi.exe를 실행합니다.
+
+중요
+----
+- 생성되는 EXE는 HTML 게임이 아닙니다.
+- 공식 OpenRiichi 소스를 GitHub Actions가 직접 clone --recurse-submodules 합니다.
+- 교육 패치는 source/Game/Rendering/Menu/GameMenuView.vala 한 파일에만 적용됩니다.
+- 치/퐁/깡/리치/론/쯔모 가능 판정은 원본 ClientRoundState/TileRules를 사용합니다.
+- 실제 게임 행동도 원본 signal -> client_* 경로를 사용합니다.
+- 빌드 실패 시 Actions의 실패 단계 로그가 원인입니다. 그 로그를 ChatGPT에 보내면 다음 수정이 가능합니다.
+- GPLv3 프로젝트이므로 재배포 시 라이선스와 소스 제공 의무를 확인하십시오.
+
+현재 검증 범위
+-------------
+[완료] 공식 README의 Windows 의존성/빌드 명령과 대조
+[완료] OpenRiichi 원본 ClientRoundState -> GameMenuView 연결 구조 대조
+[완료] 교육 패치가 별도 마작 룰 판정기를 만들지 않는지 정적 확인
+[완료] GitHub Actions용 Windows/MSYS2 자동빌드 workflow 작성
+[미완료] GitHub Actions에서 실제 컴파일 성공 여부
+[미완료] 생성된 Windows EXE 실제 실행/플레이 검증
+
+마지막 두 항목은 이 ZIP을 GitHub 저장소에서 Actions로 실행해 산출물이 나온 뒤에만
+'완료'라고 표시할 수 있습니다. 실행하지 않은 것을 성공했다고 표기하지 않습니다.
