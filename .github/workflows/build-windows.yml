@@ -1,0 +1,80 @@
+name: Build OpenRiichi KR Education Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout build-kit
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git
+            mingw-w64-x86_64-vala
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-meson
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-libgee
+            mingw-w64-x86_64-gtk3
+            mingw-w64-x86_64-glew
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_image
+            mingw-w64-x86_64-SDL2_mixer
+            mingw-w64-x86_64-pango
+
+      - name: Download OpenRiichi source
+        shell: msys2 {0}
+        run: |
+          git clone --recurse-submodules https://github.com/FluffyStuff/OpenRiichi.git upstream
+
+      - name: Apply Korean education patch
+        shell: msys2 {0}
+        run: |
+          cp -f "patch/source/Game/Rendering/Menu/GameMenuView.vala" \
+                "upstream/source/Game/Rendering/Menu/GameMenuView.vala"
+
+      - name: Configure OpenRiichi
+        shell: msys2 {0}
+        working-directory: upstream
+        run: |
+          meson setup build -Dbuildtype=release
+
+      - name: Compile OpenRiichi
+        shell: msys2 {0}
+        working-directory: upstream
+        run: |
+          meson compile -C build
+
+      - name: Create portable game
+        shell: msys2 {0}
+        run: |
+          mkdir -p portable
+          cp upstream/build/OpenRiichi.exe portable/
+          cp -R upstream/bin/Data portable/Data
+          cp -n /mingw64/bin/*.dll portable/ || true
+          cp upstream/LICENSE portable/LICENSE_OpenRiichi.txt
+          cp patch/README_KR.txt portable/README_KR.txt
+
+      - name: Verify package
+        shell: msys2 {0}
+        run: |
+          test -f portable/OpenRiichi.exe
+          test -d portable/Data
+          file portable/OpenRiichi.exe
+          ls -lah portable
+
+      - name: Upload Windows game
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenRiichi_KR_Education_Windows
+          path: portable/
+          if-no-files-found: error
